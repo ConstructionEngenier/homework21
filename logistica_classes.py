@@ -15,7 +15,7 @@ class Storage(ABC):
         pass
 
     @abstractmethod
-    def get_items(self):
+    def get_item(self):
         pass
 
     @abstractmethod
@@ -55,11 +55,14 @@ class Store(Storage):
                     print(f"Такого количества {name} нет на складе")
         if not is_found:
             print(f"Товар {name} не найден")
+        if self.items[name] == 0 and is_found:
+            del self.items[name]
+
 
     def get_free_space(self):
         return self.capacity - sum(self.items.values())
 
-    def get_items(self):
+    def get_item(self):
         return self.items
 
     def get_unique_items_count(self):
@@ -70,7 +73,7 @@ class Shop(Store):
     def __init__(self, limit=5):
         super().__init__()
         self.items = {}
-        self.capacity = 20
+        self.capacity = 50
         self._limit = limit
 
     @property
@@ -86,16 +89,15 @@ class Shop(Store):
 
 class Request:
     def __init__(self, str):
-        lst = self.get_data(str)
+        lst = self.get_req(str)
 
         self.from_ = lst[4]
         self.amount = int(lst[1])
         self.product = lst[2]
         self.to = lst[6]
 
-    def get_data(self, str):
+    def get_req(self, str):
         return str.split(" ")
 
     def __repr__(self):
         return f"Доставить {self.amount} {self.product} из {self.from_} в {self.to}"
-
